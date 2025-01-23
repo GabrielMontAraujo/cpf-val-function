@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -26,5 +26,6 @@ jobs:
     - name: Deploy to Azure Function App
       uses: azure/functions-action@v1
       with:
-        app-name: cpf-val-function
+        app-name: cpf-val-function 
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
