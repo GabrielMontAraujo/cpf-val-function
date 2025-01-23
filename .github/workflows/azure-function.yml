@@ -23,9 +23,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    # Etapa para autenticar no Azure
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Etapa para realizar o deploy
     - name: Deploy to Azure Function App
       uses: azure/functions-action@v1
       with:
-        app-name: cpf-val-function 
+        app-name: cpf-val-function
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-
