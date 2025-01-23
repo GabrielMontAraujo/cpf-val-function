@@ -1,12 +1,24 @@
 import re
+import azure.functions as func
 
-def main(req):
+def main(req: func.HttpRequest) -> func.HttpResponse:
     cpf = req.params.get('cpf')
     if not cpf:
-        return {
-            'status': 400,
-            'body': "Por favor, forneça um CPF."
-        }
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            return func.HttpResponse(
+                "Por favor, forneça um CPF na query string ou no corpo da requisição.",
+                status_code=400
+            )
+        else:
+            cpf = req_body.get('cpf')
+
+    if not cpf:
+        return func.HttpResponse(
+            "Por favor, forneça um CPF.",
+            status_code=400
+        )
 
     def validar_cpf(cpf):
         cpf = re.sub(r'\D', '', cpf)
@@ -38,10 +50,8 @@ def main(req):
 
     is_valid = validar_cpf(cpf)
 
-    return {
-        'status': 200,
-        'body': {
-            'cpf': cpf,
-            'valido': is_valid
-        }
-    }
+    return func.HttpResponse(
+        body=f'{{"cpf": "{cpf}", "valido": {str(is_valid).lower()}}}',
+        status_code=200,
+        mimetype="application/json"
+    )
